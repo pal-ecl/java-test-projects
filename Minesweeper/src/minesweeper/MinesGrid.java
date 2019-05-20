@@ -55,6 +55,7 @@ public class MinesGrid {
 				index++;
 			}
 			if (win){
+				dateStop = new Date();
 				JOptionPane.showMessageDialog(null,"You win ! in " + ((dateStop.getTime() - dateStart.getTime())/1000) + " seconds.");
 			}
 		}
