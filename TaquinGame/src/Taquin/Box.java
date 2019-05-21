@@ -43,7 +43,7 @@ public class Box extends JButton{
 	}
 
 
-	public int getX() {
+	public int getXGrid() {
 		return x;
 	}
 
@@ -53,7 +53,7 @@ public class Box extends JButton{
 	}
 
 
-	public int getY() {
+	public int getYGrid() {
 		return y;
 	}
 
