@@ -34,6 +34,11 @@ public class FloodIt {
 	private JTextPane jTPmoves;
 	private JTextPane jTPnbMaxMoves;
 	private JComboBox<Object> jCBnbColors;
+	private int jCBnbColorsIndex;
+	private JButton[] jBColorToPlay;
+	private JTextPane txtpnColorsToPlay;
+	private JTextPane jTPGameSize;
+	private JTextPane jTPNbGameSize;
 
 	/**
 	 * Launch the application.
@@ -62,6 +67,7 @@ public class FloodIt {
 		frame.setBounds(100, 100, 698, 581);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		colorsToPlay();
 		
 		initialize();
 	}
@@ -80,63 +86,81 @@ public class FloodIt {
 					gameSize = Integer.parseInt(jTFSize.getText());
 				}
 				catch(NotNumberException message){
-					JOptionPane.showMessageDialog(null,"Please use Number only");				
+				
 				}
 				nbColors = jCBnbColors.getSelectedIndex()+2;
+				jCBnbColorsIndex = jCBnbColors.getSelectedIndex();
 				frame.getContentPane().removeAll();				
 				floodIt = new FloodItGrid(gameSize, gameSize, nbColors);
+				colorsToPlay();
 				initialize();
 				frame.revalidate();
 				frame.repaint();
 			}
 		});
 		btnNewButton.setBackground(Color.ORANGE);
-		btnNewButton.setBounds(0, 0, 110, 20);
+		btnNewButton.setBounds(5, 0, 110, 20);
 		frame.getContentPane().add(btnNewButton);
 		
 		jTpCounter = new JTextPane();
-		jTpCounter.setBounds(70, 83, 50, 20);
+		jTpCounter.setBounds(75, 105, 50, 20);
 		frame.getContentPane().add(jTpCounter);
 		
-		jTFSize = new JTextField("Game size");
+		jTFSize = new JTextField("Enter game size");
 		jTFSize.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent arg0) {
 				jTFSize.setText("");
 			}
 		});
-		jTFSize.setBounds(0, 20, 110, 20);
+		jTFSize.setBounds(5, 20, 110, 20);
 		frame.getContentPane().add(jTFSize);
 		jTFSize.setColumns(10);
 		
 		jTPNbColors = new JTextPane();
 		jTPNbColors.setText("Nb colors:");		
-		jTPNbColors.setBounds(0, 40, 70, 20);
+		jTPNbColors.setBounds(5, 60, 70, 20);
 		frame.getContentPane().add(jTPNbColors);
 		
 		jTPmaxMoves = new JTextPane();
 		jTPmaxMoves.setText("Max moves:");		
-		jTPmaxMoves.setBounds(0, 60, 70, 20);
+		jTPmaxMoves.setBounds(5, 85, 70, 20);
 		frame.getContentPane().add(jTPmaxMoves);
 		
 		jTPmoves = new JTextPane();
 		jTPmoves.setText("Moves:");
-		jTPmoves.setBounds(0, 83, 70, 20);
+		jTPmoves.setBounds(5, 105, 70, 20);
 		frame.getContentPane().add(jTPmoves);
 		
+		jTPNbGameSize = new JTextPane();
+		jTPNbGameSize.setText(Integer.toString(floodIt.getWidth()));
+		jTPNbGameSize.setBounds(75, 40, 30, 20);
+		frame.getContentPane().add(jTPNbGameSize);
+		
+		jTPGameSize = new JTextPane();
+		jTPGameSize.setText("Game size:");
+		jTPGameSize.setBounds(5, 40, 70, 20);
+		frame.getContentPane().add(jTPGameSize);
+		
 		jTPnbMaxMoves = new JTextPane();
-		jTPnbMaxMoves.setText(Long.toString(floodIt.getMaxMoves()));	
-		jTPnbMaxMoves.setBounds(70, 60, 50, 20);
+		jTPnbMaxMoves.setText(Long.toString(Math.round(floodIt.getWidth()*2.375)));
+		jTPnbMaxMoves.setBounds(80, 85, 50, 20);
 		frame.getContentPane().add(jTPnbMaxMoves);
 		
 		jCBnbColors = new JComboBox<Object>();
 		jCBnbColors.setToolTipText("Nb of Colors");
 		jCBnbColors.setModel(new DefaultComboBoxModel<Object>(new String[] {"2", "3", "4", "5", "6", "7", "8"}));
-		jCBnbColors.setSelectedIndex(0);
-		jCBnbColors.setBounds(70, 40, 40, 20);
+		jCBnbColors.setSelectedIndex(jCBnbColorsIndex);
+		jCBnbColors.setBounds(75, 60, 40, 20);
 		frame.getContentPane().add(jCBnbColors);
+		
+		txtpnColorsToPlay = new JTextPane();
+		txtpnColorsToPlay.setText("Colors to play :");
+		txtpnColorsToPlay.setBounds(5, 130, 100, 20);
+		frame.getContentPane().add(txtpnColorsToPlay);
+		int floodItBoxesLength = floodIt.getFloodItBoxes().length;
 
-		for (int i = 0; i < floodIt.getFloodItBoxes().length; i++){
+		for (int i = 0; i < floodItBoxesLength; i++){
 			final int j = i;
 			int x = 200 + floodIt.getFloodItBox(i).getIndexW() * 40;
 			int y = 45 + floodIt.getFloodItBox(i).getIndexH() * 40;	
@@ -145,10 +169,42 @@ public class FloodIt {
 				public void actionPerformed(ActionEvent arg0) {
 					floodIt.chooseColor(j);
 					jTpCounter.setText(Integer.toString(floodIt.getPlayCount()));
+					removeColorsToPlay();
+					colorsToPlay();
 				}
 			});
 			frame.getContentPane().add(floodIt.getFloodItBox(i));
 		}
+	}
+	
+	private void removeColorsToPlay(){
+		int indexMax = jBColorToPlay.length;
+		
+		for (int index = 0; index < indexMax; index++){
+			frame.getContentPane().remove(jBColorToPlay[index]);
+		}
+	}
+	
+	private void colorsToPlay(){
+		int nbBoxColored;
+		int xCoordinate;
+		int yCoordinate;
+		int jBColorToPlaySize;
+		
+		xCoordinate = 50;
+		yCoordinate = 155;
+		jBColorToPlaySize = 40;
+		nbBoxColored = floodIt.getColorsToPlay().size();
+		jBColorToPlay = new JButton[nbBoxColored];
+		
+		for (int index = 0; index < nbBoxColored; index++){
+			jBColorToPlay[index]= new JButton();
+			jBColorToPlay[index].setBounds(xCoordinate, yCoordinate + (index * 40), jBColorToPlaySize, jBColorToPlaySize);
+			jBColorToPlay[index].setBackground(floodIt.getColorToPlay(index));
+			frame.getContentPane().add(jBColorToPlay[index]);
+		}
+		frame.revalidate();
+		frame.repaint();		
 	}
 	
 	public static boolean isInteger(String str) {
