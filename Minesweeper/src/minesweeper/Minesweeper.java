@@ -46,7 +46,6 @@ public class Minesweeper {
 	
 	public static void createTimer(){
 		  int delay = 1000; //milliseconds
-		  System.out.println("timer created");
 		  ActionListener taskPerformer = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

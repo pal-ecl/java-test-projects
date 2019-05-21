@@ -34,12 +34,26 @@ public class MinesGrid {
 	public void shuffleMines(int indexClicked){
 		int minesToSet = nbMines;
 		while (minesToSet > 0){
-//			int randomN = Math.toIntExact(Math.round(Math.random() * (boxes.length-1)));
 			int randomN = (int)(Math.random() * boxes.length);
-			if (!getBox(randomN).isMine() && indexClicked != randomN){
+			if (!getBox(randomN).isMine()){
+				if (nbMines < (width * height) - 9){
+					if ((indexClicked != randomN) &&
+							(indexClicked + 1 != randomN) &&
+							(indexClicked - 1 != randomN) &&
+							(indexClicked + width != randomN) &&
+							(indexClicked - width != randomN) &&
+							(indexClicked - width - 1 != randomN) &&
+							(indexClicked - width + 1 != randomN) &&
+							(indexClicked + width - 1 != randomN) &&
+							(indexClicked + width +1 != randomN)
+							){
+						getBox(randomN).setMine(true);
+						minesToSet--;
+					}				
+				} else {
 				getBox(randomN).setMine(true);
-				System.out.println(getBox(randomN).getIndexBoxes());
 				minesToSet--;
+				}
 			}
 		}
 	}
