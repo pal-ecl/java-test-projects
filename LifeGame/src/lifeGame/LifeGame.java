@@ -120,7 +120,7 @@ public class LifeGame {
 		
 		JButton btntxtnCustom = new JButton();
 		btntxtnCustom.setBackground(Color.PINK);
-		btntxtnCustom.setText("Custom :");
+		btntxtnCustom.setText("Custom G !");
 		btntxtnCustom.setBounds(10, 140, 120, 25);
 		btntxtnCustom.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -145,7 +145,7 @@ public class LifeGame {
 						lifeGame.forwardTime();
 						jTPCounter.setText(Integer.toString(lifeGame.getGenerationCount()));
 			            try {
-			                Thread.sleep(1000);
+			                Thread.sleep(500);
 			            } catch (InterruptedException ex) {
 			            }
 			        }
