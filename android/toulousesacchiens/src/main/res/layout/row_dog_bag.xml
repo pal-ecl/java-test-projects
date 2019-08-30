@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="?selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tvDogBagPlace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Lieu"
+        android:textColor="#009688"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/tvDogBagNbr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Numéro"
+        android:textColor="#444242"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/tvDogBagLat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Latitude"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/tvDogBagLong"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Longitude"
+        android:gravity="center" />
+</LinearLayout>
