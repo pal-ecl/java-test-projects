@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name" translatable="false">testAndroid</string>
+    <string name="customString">I like blueberries.</string>
+</resources>

@@ -3,6 +3,7 @@ package com.lescure.toulousesacchiens.utils;
 import com.google.gson.Gson;
 import com.lescure.toulousesacchiens.model.RecordBean;
 import com.lescure.toulousesacchiens.model.ResultBean;
+import com.lescure.toulousesacchiens.utils.OkHttpUtil;
 
 import java.util.ArrayList;
 

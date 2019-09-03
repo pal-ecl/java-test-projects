@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             Log.w("TAG_VH", "display data on VH");
+
             if (exception != null) {
                 tvNoResults.setText("Les données ne sont pas accessibles");
                 tvNoResults.setVisibility(View.VISIBLE);

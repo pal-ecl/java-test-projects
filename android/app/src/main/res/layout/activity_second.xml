@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".SecondActivity">
+
+    <TextView
+        android:id="@+id/tvImport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Myrtilles." />
+
+    <Button
+        android:id="@+id/btAlert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#009688"
+        android:onClick="onClick2"
+        android:text="Alerte" />
+
+    <Button
+        android:id="@+id/btTimePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FF5722"
+        android:onClick="onClick2"
+        android:text="Heure" />
+
+    <Button
+        android:id="@+id/btDatePicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#009688"
+        android:onClick="onClick2"
+        android:text="Date" />
+
+    <Button
+        android:id="@+id/btNotif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#FF5722"
+        android:onClick="onClick2"
+        android:text="Notif" />
+
+    <Button
+        android:id="@+id/btDelayNotif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#009688"
+        android:onClick="onClick2"
+        android:text="Notif+" />
+
+</LinearLayout>
