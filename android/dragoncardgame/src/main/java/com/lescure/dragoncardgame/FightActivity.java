@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,16 +30,21 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
     public final static String STATUS_SLEEP = "sleep";
     public final static String STATUS_TIRED = "tired";
     public final static String STATUS_READY = "ready";
+    public final static int AVATARS_HP = 20;
 
 
     private DeckBean playersDeck, dlsDeck;
     private ArrayList<CardBean> playersHand, dlsHand, playersPlayedCards, dlsPlayedCards;
     private RecyclerView rvPlayersHand, rvDlsHand, rvPlayersArena, rvDlsArena;
     private CardAdapter playersHandAdapter, dlsHandAdapter, playersArenaAdapter, dlsArenaAdapter;
+    private TextView tvDlsHP;
     private int turn;
     private Random ran;
     private CardBean attacker;
     private boolean hasPlay;
+    private int dlsHP;
+    private int playersHP;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +52,11 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
         setContentView(R.layout.activity_fight);
 
         dlsDeck = new DeckBean("Dragon Lord's deck", new ArrayList<CardBean>());
-        dlsDeck.getCards().add(new CardBean("Poisonous Dragon", Color.CYAN, 8, 12));
-        dlsDeck.getCards().add(new CardBean("Dead Dragon", Color.GRAY, 6, 14));
-        dlsDeck.getCards().add(new CardBean("Bad Dragon", Color.BLACK, 9, 11));
-        dlsDeck.getCards().add(new CardBean("Angry Dragon", Color.RED, 10, 10));
-        dlsDeck.getCards().add(new CardBean("Shadow Dragon", Color.GRAY, 5, 15));
+        dlsDeck.getCards().add(new CardBean("Poisonous Dragon", Color.CYAN, 7, 11));
+        dlsDeck.getCards().add(new CardBean("Dead Dragon", Color.GRAY, 5, 13));
+        dlsDeck.getCards().add(new CardBean("Bad Dragon", Color.BLACK, 8, 10));
+        dlsDeck.getCards().add(new CardBean("Angry Dragon", Color.RED, 9, 9));
+        dlsDeck.getCards().add(new CardBean("Shadow Dragon", Color.GRAY, 4, 14));
 
 
         playersDeck = (DeckBean) getIntent().getSerializableExtra(PLAYERS_FINAL_DECK);
@@ -66,6 +73,7 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
         dlsHandAdapter = new CardAdapter(dlsHand, this);
         rvDlsHand.setAdapter(dlsHandAdapter);
         rvDlsHand.setLayoutManager(new GridLayoutManager(this, 5));
+        tvDlsHP = findViewById(R.id.tvDlsHP);
 
         rvPlayersArena = findViewById(R.id.rvPlayersArena);
         playersPlayedCards = new ArrayList<>();
@@ -81,6 +89,9 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
 
         turn = 0;
         ran = new Random();
+        dlsHP = AVATARS_HP;
+        tvDlsHP.setText("Dragon Lord : "+dlsHP+"HP");
+        playersHP = AVATARS_HP;
     }
 
     @Override
@@ -126,6 +137,7 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
             case IN_ARENA:
                 if (attacker != null) {
                     if (attacker.equals(cardBean)) {
+                        Log.w("TAG_ATTACK", attacker.getName()+" is not attacking yet.");
                         attacker = null;
                     } else if (playersPlayedCards.contains(cardBean)) {
                         Toast.makeText(this,
@@ -152,56 +164,6 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
                         Toast.LENGTH_SHORT).show();
         }
     }
-
-    /*public void onTurnClick(View view) {
-        CardBean ranDlsPlayedCard;
-
-        attacker = null;
-        hasPlay = false;
-
-        switch (turn) {
-            case 0:
-                Log.w("TAG_TURN", "Click on start button");
-                btTurn.setText("End turn");
-                for (int i = 0; i < NBR_CARDS_START_HAND; i++) {
-                    drawRandomCard(playersDeck, playersHand);
-                    drawRandomCard(dlsDeck, dlsHand);
-                }
-                break;
-            default:
-                Log.w("TAG_TURN", "Click on end turn button");
-
-                wakeUp(playersArenaAdapter, playersPlayedCards);
-                wakeUp(dlsArenaAdapter, dlsPlayedCards);
-
-                if (playersDeck.getCards().size() == 0) {
-                    Toast.makeText(this, "No more cards in deck",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    drawRandomCard(playersDeck, playersHand);
-                }
-                if (dlsDeck.getCards().size() != 0) {
-                    drawRandomCard(dlsDeck, dlsHand);
-                }
-                if (dlsHand.size() > 0) {
-                    ranDlsPlayedCard = dlsHand.get(ran.nextInt(dlsHand.size()));
-                    dlsHand.remove(ranDlsPlayedCard);
-                    dlsHandAdapter.notifyDataSetChanged();
-                    dlsPlayedCards.add(ranDlsPlayedCard);
-                    ranDlsPlayedCard.setStatus(STATUS_SLEEP);
-                    dlsArenaAdapter.notifyDataSetChanged();
-                    ranDlsPlayedCard.setLocation(IN_ARENA);
-                }
-                if (dlsPlayedCards.size() > 0) {
-                    if (playersPlayedCards.size() > 0) {
-                        dlsAttack();
-                    }
-                }
-        }
-        playersHandAdapter.notifyDataSetChanged();
-        dlsHandAdapter.notifyDataSetChanged();
-        turn += 1;
-    }*/
 
     public void onTurnClick(MenuItem item) {
         CardBean ranDlsPlayedCard;
@@ -243,8 +205,10 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
                     ranDlsPlayedCard.setLocation(IN_ARENA);
                 }
                 if (dlsPlayedCards.size() > 0) {
-                    if (playersPlayedCards.size() > 0) {
-                        dlsAttack();
+                    for (int i = 0; i < dlsPlayedCards.size(); i++){
+                        if (playersPlayedCards.size() > 0) {
+                            dlsAttack();
+                        }
                     }
                 }
         }
@@ -265,13 +229,15 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
     private void attack(CardBean attacker, CardBean defender) {
         defender.setHp(defender.getHp() - attacker.getPower());
         attacker.setHp(attacker.getHp() - defender.getPower());
+        Log.w("TAG_ATTACK", attacker.getName()+" attacks "+defender.getName());
+        attacker.setStatus(STATUS_SLEEP);
     }
 
     private void attackResult(CardBean card, CardAdapter adapter, ArrayList<CardBean> playedCards) {
         if (card.getHp() < 1) {
             playedCards.remove(card);
+            Log.w("TAG_ATTACK", card.getName()+" died");
         }
-        card.setStatus(STATUS_SLEEP);
         adapter.notifyDataSetChanged();
     }
 
@@ -288,13 +254,38 @@ public class FightActivity extends AppCompatActivity implements CardAdapter.Card
     private void dlsAttack() {
         CardBean ranAttacker;
         CardBean ranDefender;
+        ArrayList<CardBean> attackGroup;
 
-        ranAttacker = dlsPlayedCards.get(ran.nextInt(dlsPlayedCards.size()));
-        ranDefender = playersPlayedCards.get(ran.nextInt(playersPlayedCards.size()));
-        attack(ranAttacker, ranDefender);
-        attackResult(ranDefender, playersArenaAdapter, playersPlayedCards);
-        attackResult(ranAttacker, dlsArenaAdapter, dlsPlayedCards);
-        playersArenaAdapter.notifyDataSetChanged();
-        dlsArenaAdapter.notifyDataSetChanged();
+        attackGroup = new ArrayList<>();
+
+        for (int i = 0; i < dlsPlayedCards.size(); i++) {
+            if(dlsPlayedCards.get(i).getStatus().equals(STATUS_READY)){
+                attackGroup.add(dlsPlayedCards.get(i));
+            }
+        }
+        while (attackGroup.size() > 0) {
+            ranAttacker = attackGroup.get(ran.nextInt(attackGroup.size()));
+                if (playersPlayedCards.size() > 0) {
+                    ranDefender = playersPlayedCards.get(ran.nextInt(playersPlayedCards.size()));
+                    attack(ranAttacker, ranDefender);
+                    attackResult(ranDefender, playersArenaAdapter, playersPlayedCards);
+                    attackResult(ranAttacker, dlsArenaAdapter, dlsPlayedCards);
+                    playersArenaAdapter.notifyDataSetChanged();
+                    dlsArenaAdapter.notifyDataSetChanged();
+                }
+            attackGroup.remove(ranAttacker);
+        }
+    }
+
+    public void onDLsClick(View view) {
+        if (attacker != null && dlsPlayedCards.size() == 0){
+            Log.w("TAG_ATTACK", attacker.getName()+" attacks DL");
+            dlsHP -= dlsHP - attacker.getPower();
+            tvDlsHP.setText("Dragon Lord : "+dlsHP+"HP");
+            attacker.setStatus(STATUS_SLEEP);
+            attacker = null;
+        } else {
+            Toast.makeText(this, "YOU REALLY THINK YOU CAN REACH ME ?!", Toast.LENGTH_SHORT).show();
+        }
     }
 }
