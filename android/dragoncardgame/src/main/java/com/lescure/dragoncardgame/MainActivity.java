@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lescure.dragoncardgame.adapters.CardAdapter;
+import com.lescure.dragoncardgame.model.AvailableCards.GreenDragonBean;
 import com.lescure.dragoncardgame.model.CardBean;
 import com.lescure.dragoncardgame.model.DeckBean;
 
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements CardAdapter.CardListener {
 
     private static final int MENU_NEW_GAME = 1;
+    private static final int DECK_CAPACITY = 10;
     private ImageView imageView;
     private ScrollView svMView;
     private RecyclerView rvMain;
@@ -47,13 +49,13 @@ public class MainActivity extends AppCompatActivity implements CardAdapter.CardL
         cards.add(new CardBean("Blue Dragon", Color.BLUE, 5, 15));
         cards.add(new CardBean("White Dragon", Color.WHITE, 6, 14));
         cards.add(new CardBean("Red Dragon", Color.RED, 7, 13));
-        cards.add(new CardBean("Green Dragon", Color.GREEN, 8, 12));
+        cards.add(new GreenDragonBean("Green Dragon", Color.GREEN, 8, 12));
         cards.add(new CardBean("Black Dragon", Color.BLACK, 9, 11));
         cards.add(new CardBean("Gold Dragon", Color.YELLOW, 10, 10));
 
         cardAdapter = new CardAdapter(cards, this);
         rvMain.setAdapter(cardAdapter);
-        rvMain.setLayoutManager(new GridLayoutManager(this, 3));
+        rvMain.setLayoutManager(new GridLayoutManager(this, 5));
         btPlayersDeck = findViewById(R.id.btPlayersDeck);
         btFight = findViewById(R.id.btFight);
 
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements CardAdapter.CardL
             imageView.setVisibility(View.GONE);
             svMView.setVisibility(View.VISIBLE);
             btPlayersDeck.setVisibility(View.VISIBLE);
-            btPlayersDeck.setText("Your deck : " + playersDeck.getCards().size() + "/5 cards");
+            btPlayersDeck.setText("Your deck : " + playersDeck.getCards().size() + "/"+DECK_CAPACITY+" cards");
         }
     }
 
@@ -88,18 +90,16 @@ public class MainActivity extends AppCompatActivity implements CardAdapter.CardL
 
     @Override
     public void onCardClick(CardBean cardBean) {
-        if (playersDeck.getCards().size() < 5) {
-            Log.w("TAG_CARD", "Add card in player's deck : ");
+        if (playersDeck.getCards().size() < DECK_CAPACITY) {
             if (playersDeck.getCards().contains(cardBean)) {
-                playersDeck.getCards().add(new CardBean(cardBean.getName(), cardBean.getTextColor(),
-                        cardBean.getPower(), cardBean.getHp()));
+                playersDeck.getCards().add((CardBean) cardBean.clone());
             } else {
                 playersDeck.getCards().add(cardBean);
             }
-            btPlayersDeck.setText("Your deck : " + playersDeck.getCards().size() + "/5 cards");
+            btPlayersDeck.setText("Your deck : " + playersDeck.getCards().size() + "/"+DECK_CAPACITY+" cards");
             Log.w("TAG_CARD", "Add card in player's deck : " + cardBean.getName());
 
-            if (playersDeck.getCards().size() == 5) {
+            if (playersDeck.getCards().size() == DECK_CAPACITY) {
                 Log.w("TAG_CARD", "deck's complete");
                 Toast.makeText(this, "Congratulations, your deck is complete !",
                         Toast.LENGTH_SHORT).show();
