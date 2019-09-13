@@ -5,8 +5,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="10dp"
-
     android:gravity="center"
     android:orientation="vertical">
 
@@ -15,13 +13,13 @@
         android:layout_width="60dp"
         android:layout_height="120dp"
         android:layout_margin="2dp"
-        app:cardBackgroundColor="#FFFFFF"
+        app:cardBackgroundColor="#46392F"
         app:cardCornerRadius="4dp"
-        app:cardElevation="2dp">
+        app:cardElevation="3dp">
 
         <LinearLayout
             android:layout_width="57dp"
-            android:layout_height="match_parent"
+            android:layout_height="117dp"
             android:layout_gravity="center"
             android:background="#E7BC9B"
             android:gravity="center"

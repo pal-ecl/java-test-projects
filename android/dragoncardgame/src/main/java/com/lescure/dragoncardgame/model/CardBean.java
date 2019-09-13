@@ -14,17 +14,22 @@ public class CardBean implements Serializable, Cloneable {
     private String location;
     private int power;
     private int hp;
+    private int statusAwake;
+    private int statusHealth;
+    private boolean attacker;
+    private int animate;
+
     protected String effect;
-    protected int statusAwake;
-    protected int statusHealth;
-    protected boolean attacker;
+    protected int baseStatusAwake;
 
     public CardBean(String name, int dragonColor, int power, int hp) {
         this.name = name;
         this.dragonColor = dragonColor;
         this.power = power;
         this.hp = hp;
-        this.statusAwake = FightActivity.STATUS_AWAKENING_TIRED;
+        this.statusAwake = GameRules.STATUS_AWAKENING_READY;
+        this.baseStatusAwake = GameRules.STATUS_AWAKENING_TIRED;
+        animate = GameRules.ANIMATE_NONE;
     }
 
     public long getId() {
@@ -99,15 +104,31 @@ public class CardBean implements Serializable, Cloneable {
         return effect;
     }
 
+    public int getBaseStatusAwake() {
+        return baseStatusAwake;
+    }
+
+    public void setBaseStatusAwake(int baseStatusAwake) {
+        this.baseStatusAwake = baseStatusAwake;
+    }
+
     public void setEffect(String effect) {
         this.effect = effect;
+    }
+
+    public int getAnimate() {
+        return animate;
+    }
+
+    public void setAnimate(int animate) {
+        this.animate = animate;
     }
 
     public void attacks(CardBean defender){
         Log.w("TAG_ATTACK", this.getName()+" attacks "+defender.getName());
         defender.defends(this);
         this.defends(defender);
-        this.setStatusAwake(FightActivity.STATUS_AWAKENING_TIRED);
+        this.setStatusAwake(GameRules.STATUS_AWAKENING_TIRED);
         this.setAttacker(false);
     }
 

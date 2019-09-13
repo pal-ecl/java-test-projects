@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lescure.dragoncardgame.FightActivity;
 import com.lescure.dragoncardgame.R;
 import com.lescure.dragoncardgame.model.CardBean;
+import com.lescure.dragoncardgame.model.GameRules;
 
 import java.util.ArrayList;
 
@@ -40,15 +41,15 @@ public class HandAdapter extends RecyclerView.Adapter<HandAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final CardBean datum = cards.get(position);
-        holder.tvName.setText(datum.getName());
-        holder.tvPower.setText(Integer.toString(datum.getPower()));
-        holder.tvHP.setText(Integer.toString(datum.getHp()));
-        holder.tvEffect.setText(datum.getEffect());
-        holder.ivCardImage.setColorFilter(datum.getDragonColor());
+        final CardBean card = cards.get(position);
+        holder.tvName.setText(card.getName());
+        holder.tvPower.setText(Integer.toString(card.getPower()));
+        holder.tvHP.setText(Integer.toString(card.getHp()));
+        holder.tvEffect.setText(card.getEffect());
+        holder.ivCardImage.setColorFilter(card.getDragonColor());
 
-        switch (datum.getStatusAwake()){
-            case FightActivity.STATUS_AWAKENING_READY:
+        switch (card.getStatusAwake()){
+            case GameRules.STATUS_AWAKENING_READY:
                 holder.tvPower.setTextColor(Color.BLACK);
                 holder.tvHP.setTextColor(Color.BLACK);
                 holder.tvName.setTextColor(Color.BLACK);
@@ -61,24 +62,24 @@ public class HandAdapter extends RecyclerView.Adapter<HandAdapter.ViewHolder> {
                 holder.ivCardImage.setImageResource(R.mipmap.ic_dragon_sleep);
         }
 
-        if (datum.isAttacker()) {
+        if (card.isAttacker()) {
             holder.cvCards.setCardBackgroundColor(Color.YELLOW);
         }else{
-            switch (datum.getStatusHealth()) {
-                case FightActivity.STATUS_HEALTH_POISONED:
+            switch (card.getStatusHealth()) {
+                case GameRules.STATUS_HEALTH_POISONED:
                     holder.cvCards.setCardBackgroundColor(Color.GREEN);
                     break;
                 default:
-                    holder.cvCards.setCardBackgroundColor(Color.WHITE);
+                    holder.cvCards.setCardBackgroundColor(Color.parseColor("#46392F"));
             }
         }
 
-        Log.w("TAG_CARD", "Card created : " + datum.getName());
+        Log.w("TAG_CARD", "Card created : " + card.getName());
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (cardListener != null) {
-                    cardListener.onCardClick(datum);
+                    cardListener.onCardClick(card, v);
                 }
             }
         });
@@ -110,6 +111,6 @@ public class HandAdapter extends RecyclerView.Adapter<HandAdapter.ViewHolder> {
     }
 
     public interface CardListener {
-        void onCardClick(CardBean cardBean);
+        void onCardClick(CardBean cardBean, View view);
     }
 }

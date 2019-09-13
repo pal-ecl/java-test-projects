@@ -20,13 +20,12 @@ import com.lescure.dragoncardgame.adapters.CardAdapter;
 import com.lescure.dragoncardgame.model.AvailableCards.GreenDragonBean;
 import com.lescure.dragoncardgame.model.CardBean;
 import com.lescure.dragoncardgame.model.DeckBean;
+import com.lescure.dragoncardgame.model.GameRules;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements CardAdapter.CardListener {
 
-    private static final int MENU_NEW_GAME = 1;
-    private static final int DECK_CAPACITY = 10;
     private ImageView imageView;
     private ScrollView svMView;
     private RecyclerView rvMain;
@@ -52,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements CardAdapter.CardL
         cards.add(new GreenDragonBean("Green Dragon", Color.GREEN, 8, 12));
         cards.add(new CardBean("Black Dragon", Color.BLACK, 9, 11));
         cards.add(new CardBean("Gold Dragon", Color.YELLOW, 10, 10));
+        //fin de création des cartes temporaires pour test
 
         cardAdapter = new CardAdapter(cards, this);
         rvMain.setAdapter(cardAdapter);
@@ -65,20 +65,20 @@ public class MainActivity extends AppCompatActivity implements CardAdapter.CardL
             imageView.setVisibility(View.GONE);
             svMView.setVisibility(View.VISIBLE);
             btPlayersDeck.setVisibility(View.VISIBLE);
-            btPlayersDeck.setText("Your deck : " + playersDeck.getCards().size() + "/"+DECK_CAPACITY+" cards");
+            btPlayersDeck.setText("Your deck : " + playersDeck.getCards().size() + "/"+ GameRules.DECK_CAPACITY+" cards");
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_NEW_GAME, 1, "New game")
+        menu.add(0, GameRules.MENU_NEW_GAME, 1, "New game")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == MENU_NEW_GAME) {
+        if (item.getItemId() == GameRules.MENU_NEW_GAME) {
             imageView.setVisibility(View.GONE);
             svMView.setVisibility(View.VISIBLE);
             btPlayersDeck.setVisibility(View.VISIBLE);
@@ -89,17 +89,17 @@ public class MainActivity extends AppCompatActivity implements CardAdapter.CardL
     }
 
     @Override
-    public void onCardClick(CardBean cardBean) {
-        if (playersDeck.getCards().size() < DECK_CAPACITY) {
-            if (playersDeck.getCards().contains(cardBean)) {
+    public void onCardClick(CardBean cardBean, View view) {
+        if (playersDeck.getCards().size() < GameRules.DECK_CAPACITY) {
+           //if (playersDeck.getCards().contains(cardBean)) {
                 playersDeck.getCards().add((CardBean) cardBean.clone());
-            } else {
+            /*} else {
                 playersDeck.getCards().add(cardBean);
-            }
-            btPlayersDeck.setText("Your deck : " + playersDeck.getCards().size() + "/"+DECK_CAPACITY+" cards");
+            }*/
+            btPlayersDeck.setText("Your deck : " + playersDeck.getCards().size() + "/"+GameRules.DECK_CAPACITY+" cards");
             Log.w("TAG_CARD", "Add card in player's deck : " + cardBean.getName());
 
-            if (playersDeck.getCards().size() == DECK_CAPACITY) {
+            if (playersDeck.getCards().size() == GameRules.DECK_CAPACITY) {
                 Log.w("TAG_CARD", "deck's complete");
                 Toast.makeText(this, "Congratulations, your deck is complete !",
                         Toast.LENGTH_SHORT).show();
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements CardAdapter.CardL
     public void onFightClick(View view) {
         Log.w("TAG_BUTTON", "To fight");
         Intent intent = new Intent(this, FightActivity.class);
-        intent.putExtra(FightActivity.PLAYERS_FINAL_DECK, playersDeck);
+        intent.putExtra(GameRules.PLAYERS_FINAL_DECK, playersDeck);
         startActivity(intent);
     }
 }

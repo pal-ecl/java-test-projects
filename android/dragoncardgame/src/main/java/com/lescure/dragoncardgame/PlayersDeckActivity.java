@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ScrollView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -57,7 +58,7 @@ public class PlayersDeckActivity extends AppCompatActivity implements CardAdapte
     }
 
     @Override
-    public void onCardClick(CardBean cardBean) {
+    public void onCardClick(CardBean cardBean, View view) {
         deck.getCards().remove(cardBean);
         cardAdapter.notifyDataSetChanged();
         Log.w("TAG_PLAYER_DECK", "remove from deck : " + cardBean.getName());

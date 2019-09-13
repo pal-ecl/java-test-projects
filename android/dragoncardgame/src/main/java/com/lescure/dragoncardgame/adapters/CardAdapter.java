@@ -5,6 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.lescure.dragoncardgame.FightActivity;
 import com.lescure.dragoncardgame.R;
 import com.lescure.dragoncardgame.model.CardBean;
+import com.lescure.dragoncardgame.model.GameRules;
 
 import java.util.ArrayList;
 
@@ -40,15 +45,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        final CardBean datum = cards.get(position);
-        holder.tvName.setText(datum.getName());
-        holder.tvPower.setText(Integer.toString(datum.getPower()));
-        holder.tvHP.setText(Integer.toString(datum.getHp()));
-        holder.tvEffect.setText(datum.getEffect());
-        holder.ivCardImage.setColorFilter(datum.getDragonColor());
+        final CardBean card = cards.get(position);
+        holder.tvName.setText(card.getName());
+        holder.tvPower.setText(Integer.toString(card.getPower()));
+        holder.tvHP.setText(Integer.toString(card.getHp()));
+        holder.tvEffect.setText(card.getEffect());
+        holder.ivCardImage.setColorFilter(card.getDragonColor());
 
-        switch (datum.getStatusAwake()){
-            case FightActivity.STATUS_AWAKENING_READY:
+        switch (card.getStatusAwake()){
+            case GameRules.STATUS_AWAKENING_READY:
                 holder.tvPower.setTextColor(Color.BLACK);
                 holder.tvHP.setTextColor(Color.BLACK);
                 holder.tvName.setTextColor(Color.BLACK);
@@ -61,24 +66,35 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 holder.ivCardImage.setImageResource(R.mipmap.ic_dragon_sleep);
         }
 
-        if (datum.isAttacker()) {
+        if (card.isAttacker()) {
             holder.cvCards.setCardBackgroundColor(Color.YELLOW);
         }else{
-            switch (datum.getStatusHealth()) {
-                case FightActivity.STATUS_HEALTH_POISONED:
+            switch (card.getStatusHealth()) {
+                case GameRules.STATUS_HEALTH_POISONED:
                     holder.cvCards.setCardBackgroundColor(Color.GREEN);
                     break;
                 default:
-                    holder.cvCards.setCardBackgroundColor(Color.WHITE);
+                    holder.cvCards.setCardBackgroundColor(Color.parseColor("#46392F"));
             }
         }
 
-        Log.w("TAG_CARD", "Card created : " + datum.getName());
+        switch(card.getAnimate()){
+            case GameRules.ANIMATE_ATTACK:
+                animateAttack(holder.cvCards, GameRules.ANIM_PLAYERS_ATTACK);
+                card.setAnimate(GameRules.ANIMATE_NONE);
+                break;
+            case GameRules.ANIMATE_DEFEND:
+                animateDefend(holder.cvCards);
+                card.setAnimate(GameRules.ANIMATE_NONE);
+                break;
+        }
+        final CardView animateView = holder.cvCards;
+        Log.w("TAG_CARD", "Card created : " + card.getName());
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (cardListener != null) {
-                    cardListener.onCardClick(datum);
+                    cardListener.onCardClick(card, animateView);
                 }
             }
         });
@@ -110,6 +126,36 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
     }
 
     public interface CardListener {
-        void onCardClick(CardBean cardBean);
+        void onCardClick(CardBean cardBean, View view);
+    }
+
+    public void animateAttack(View view, int toYDelta){
+        Log.w("TAG_ANIMATION", "animation attack : "+view.getId());
+        RotateAnimation rotateAnimation = new RotateAnimation(0.0f, 25.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setDuration(100);
+
+        TranslateAnimation translateAnimation = new TranslateAnimation(
+                0, 0, 0, toYDelta);
+        translateAnimation.setStartOffset(200);
+        translateAnimation.setDuration(100);
+
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(rotateAnimation);
+        set.addAnimation(translateAnimation);
+        view.startAnimation(set);
+    }
+
+    public void animateDefend (View view){
+        Log.w("TAG_ANIMATION", "animation defend : "+view.getId());
+        TranslateAnimation translateAnimation = new TranslateAnimation(
+                -3, 3, 0, 0);
+        translateAnimation.setDuration(80);
+        translateAnimation.setRepeatCount(5);
+
+        AnimationSet set = new AnimationSet(true);
+        set.addAnimation(translateAnimation);
+        view.startAnimation(set);
     }
 }
